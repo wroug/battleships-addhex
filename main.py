@@ -59,6 +59,8 @@ def main():
         conn = s
         turn = False  # The client waits for the host to shoot first
 
+        # comment
+
         # --- Game Setup ---
         # Initializes a 5x5 grid for the player's own ships ('~' represents water)
         my_board = create_board()
