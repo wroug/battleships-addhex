@@ -28,7 +28,17 @@ def main():
     if choice == 's':
         # --- SERVER ROLE (The Host) ---
         # Automatically finds the local IP address of your computer on the Wi-Fi network
-        host_ip = socket.gethostbyname(socket.gethostname())
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        try:
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+        finally:
+            s.close()
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        host_ip = ip #socket.gethostbyname(socket.gethostname())
         print(f"Hosting! Your IP is: {host_ip}")
         # Binds the socket to the IP and a specific Port (5555) so it knows where to listen
         s.bind((host_ip, 5555))
@@ -64,3 +74,37 @@ def main():
         my_board[ship_r][ship_c] = "S"
 
     # --- Battle Loop ---
+    while True:
+        print_boards(my_board, enemy_hidden)
+
+        if turn:
+            print("YOUR TURN!")
+            shot = input("Enter target row and col: ")
+            conn.send(shot.encode())
+            result = conn.recv(1024).decode()
+            print(f"Result: {result}")
+
+            r, c = map(int, shot.split())
+            enemy_hidden[r][c] = "X" if result == "HIT!" else "O"
+            if result == ("WIN"):
+                print("YOU WIN!")
+                break
+            turn = False
+            break
+        else:
+            print("WAITING FOR ENEMY...")
+            data = conn.recv(1024).decode()
+            r, c = map(int, data.split())
+
+            if r == ship_r and c == ship_c:
+                res = "WIN" if my_board[r][c] == "S" else "HIT"
+                my_board[r][c] = "X"
+                conn.send(res.encode())
+                print("THEY HIT YOU! YOU LOSE.")
+                break
+            else:
+                my_board[r][c] = "O"
+                conn.send("MISS".encode())
+                turn = True
+
+main()
