@@ -4,10 +4,7 @@ def create_board():
     return [["~"] * 5 for _ in range(5)]
 
 def print_boards(my_board, enemy_hidden_board):
-    """
-    Displays the player's board and the enemy's tracking board side-by-side.
-    Iterates through each row (i) and joins the list elements into a string.
-    """
+
     print("\n  MY BOARD       ENEMY BOARD")
     for i in range(5):
         # We use [i] for both boards so that the rows align correctly.
@@ -16,12 +13,10 @@ def print_boards(my_board, enemy_hidden_board):
 
 def main():
     # --- Network Setup ---
-    # Asks the user to define their role:
     # 's' (Server) will wait for a connection, 'c' (Client) will attempt to connect.
     choice = input("Host (s) or Join (c)? ").lower()
 
-    # Creates a 'Socket' object:
-    # socket.AF_INET: Specifies the address family (IPv4).
+
     # socket.SOCK_STREAM: Specifies the protocol (TCP), ensuring data arrives reliably and in order.
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -51,7 +46,6 @@ def main():
         turn = True  # The host traditionally takes the first shot
     else:
         # --- CLIENT ROLE (The Joiner) ---
-        # Asks for the Host's IP (which the host sees printed on their screen)
         ip = input("Enter Host IP: ")
         # Attempts to knock on the Host's door at the same Port (5555)
         s.connect((ip, 5555))
